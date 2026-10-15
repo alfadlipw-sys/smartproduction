@@ -1,0 +1,2020 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Production – Industrial Services Platform</title>
+  <meta name="description" content="Sistem Pelacakan NUP, Invoice Tracking, BAL, BAST, Jadwal Workshop, ATPA dan Pengeluaran Biaya Produksi – PT Indopelita Aircraft Services." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy-900: #070f22;
+      --navy-800: #0b1a3b;
+      --navy-700: #0f2457;
+      --navy-600: #1a3c8f;
+      --navy-card: rgba(11, 26, 59, 0.75);
+      --electric: #3b82f6;
+      --electric-light: #60a5fa;
+      --electric-glow: rgba(59, 130, 246, 0.35);
+      --accent-red: #ef4444;
+      --accent-red-glow: rgba(239, 68, 68, 0.25);
+      --accent-green: #10b981;
+      --accent-green-glow: rgba(16, 185, 129, 0.25);
+      --accent-amber: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --glass-border: rgba(59, 130, 246, 0.2);
+      --glass-border-light: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-subtle: rgba(255, 255, 255, 0.06);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--navy-900);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(ellipse at 10% 0%, rgba(26,60,143,0.35) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 10%, rgba(200,16,46,0.1) 0%, transparent 45%),
+        radial-gradient(ellipse at 50% 90%, rgba(59,130,246,0.12) 0%, transparent 60%);
+      background-attachment: fixed;
+    }
+
+    /* Background Grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Topbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(7, 15, 34, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 70px;
+    }
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand-logo {
+      height: 42px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 8px rgba(59,130,246,0.4));
+    }
+    .brand-meta {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+    .brand-title span { color: var(--electric); }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .portal-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .portal-link:hover {
+      background: rgba(59,130,246,0.15);
+      border-color: var(--electric);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .portal-link.active-link {
+      background: var(--electric);
+      border-color: var(--electric);
+      color: #fff;
+      box-shadow: 0 0 15px var(--electric-glow);
+    }
+    .time-badge {
+      font-family: 'Rajdhani', monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--electric-light);
+      background: rgba(59,130,246,0.08);
+      border: 1px solid rgba(59,130,246,0.2);
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    /* Navigation Tabs */
+    .nav-container {
+      position: sticky;
+      top: 70px;
+      z-index: 90;
+      background: rgba(11, 26, 59, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+    }
+    .nav-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      transition: all 0.2s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+    .nav-tab:hover {
+      color: var(--text-main);
+      background: rgba(255,255,255,0.02);
+    }
+    .nav-tab.active {
+      color: var(--electric);
+      border-bottom-color: var(--electric);
+      text-shadow: 0 0 12px var(--electric-glow);
+    }
+    .nav-tab .badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.1);
+      color: var(--text-muted);
+    }
+    .nav-tab.active .badge {
+      background: rgba(59,130,246,0.25);
+      color: var(--electric-light);
+    }
+    .badge-alert {
+      background: rgba(239, 68, 68, 0.2) !important;
+      color: #f87171 !important;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Main Container */
+    .app-main {
+      position: relative;
+      z-index: 1;
+      padding: 32px;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    /* Hero / Status Banner */
+    .workflow-strip {
+      background: var(--navy-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .wf-steps {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .wf-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .wf-step.active {
+      color: var(--electric-light);
+      background: rgba(59,130,246,0.12);
+      border-color: rgba(59,130,246,0.3);
+    }
+    .wf-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+    .wf-step.active .wf-num {
+      background: var(--electric);
+      color: #fff;
+    }
+    .wf-arrow { color: rgba(255,255,255,0.2); font-size: 14px; }
+
+    /* KPI Grid */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .kpi-card {
+      background: var(--navy-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.3s;
+    }
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      border-color: rgba(59,130,246,0.4);
+    }
+    .kpi-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .kpi-val {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .kpi-val.green { color: var(--accent-green); }
+    .kpi-val.electric { color: var(--electric-light); }
+    .kpi-val.amber { color: var(--accent-amber); }
+    .kpi-val.red { color: var(--accent-red); }
+    .kpi-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Content Cards & Tables */
+    .content-panel {
+      background: var(--navy-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(14px);
+      margin-bottom: 32px;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .panel-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel-title::before {
+      content: '';
+      width: 4px;
+      height: 22px;
+      background: var(--electric);
+      border-radius: 2px;
+    }
+    .panel-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--electric), #2563eb);
+      color: #fff;
+      box-shadow: 0 4px 14px var(--electric-glow);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #60a5fa, var(--electric));
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: var(--text-main);
+      border: 1px solid var(--glass-border);
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+    }
+    .btn-danger {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #f87171;
+    }
+    .btn-danger:hover {
+      background: rgba(239,68,68,0.25);
+    }
+    .btn-success {
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: #34d399;
+    }
+    .btn-success:hover {
+      background: rgba(16,185,129,0.25);
+    }
+
+    /* Search & Filter Inputs */
+    .search-box {
+      background: rgba(7, 15, 34, 0.6);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+      min-width: 240px;
+    }
+    .search-box:focus {
+      border-color: var(--electric);
+      box-shadow: 0 0 10px var(--electric-glow);
+    }
+
+    /* Tables */
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+    }
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+    .custom-table th {
+      background: rgba(7, 15, 34, 0.75);
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .custom-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+    .custom-table tr:hover td {
+      background: rgba(59, 130, 246, 0.04);
+    }
+
+    /* Status Badges */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-pill.aktif { background: rgba(16,185,129,0.12); color: #34d399; border: 1px solid rgba(16,185,129,0.25); }
+    .status-pill.selesai { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+    .status-pill.draft { background: rgba(148,163,184,0.12); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.25); }
+    .status-pill.dikirim { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); }
+    .status-pill.bal { background: rgba(139,92,246,0.15); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.3); }
+    .status-pill.bast { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+    .status-pill.lunas { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid #10b981; font-weight: 700; }
+    .status-pill.late { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.4); font-weight: 700; }
+
+    /* Progress Bar */
+    .prog-track {
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      height: 7px;
+      width: 120px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .prog-fill {
+      background: linear-gradient(90deg, var(--electric), #10b981);
+      height: 100%;
+      border-radius: 8px;
+      transition: width 0.4s ease;
+    }
+    .prog-fill.late {
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-card {
+      background: #0f2457;
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      max-width: 650px;
+      width: 100%;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .btn-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .btn-close:hover { color: #fff; }
+    .modal-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      background: rgba(0,0,0,0.15);
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-control {
+      background: rgba(7, 15, 34, 0.7);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--electric);
+      box-shadow: 0 0 10px var(--electric-glow);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .toast {
+      background: #0f2457;
+      border: 1px solid var(--electric);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+    }
+    .toast.success { border-color: var(--accent-green); }
+    .toast.error { border-color: var(--accent-red); }
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="brand-section">
+      <img src="./logo.png" alt="Indopelita Logo" class="brand-logo" />
+      <div class="brand-meta">
+        <div class="brand-title">Smart Production <span>Industrial Services</span></div>
+        <div class="brand-sub">PT Indopelita Aircraft Services &middot; Terintegrasi Database</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="time-badge" id="live-time">00:00:00</span>
+      <a href="index.html" class="portal-link">&#127968; Portal Beranda</a>
+      <a href="dashboard.html" class="portal-link">&#128202; Dashboard WS Bandung</a>
+    </div>
+  </header>
+
+  <!-- Navigation Bar -->
+  <nav class="nav-container">
+    <button class="nav-tab active" onclick="switchTab('overview')">&#128200; Executive Overview</button>
+    <button class="nav-tab" onclick="switchTab('nup')">&#128221; 1. Input NUP <span class="badge" id="badge-nup">0</span></button>
+    <button class="nav-tab" onclick="switchTab('tagihan')">&#128181; 2. Tracking Invoice &amp; BAST <span class="badge" id="badge-tagihan">0</span></button>
+    <button class="nav-tab" onclick="switchTab('workshop')">&#9881;&#65039; 3. Workshop &amp; Late Schedule <span class="badge badge-alert" id="badge-late">0 Late</span></button>
+    <button class="nav-tab" onclick="switchTab('atpa')">&#128295; 4. ATPA <span class="badge" id="badge-atpa">0</span></button>
+    <button class="nav-tab" onclick="switchTab('pengeluaran')">&#128179; 5. Pengeluaran &amp; Margin</button>
+  </nav>
+
+  <main class="app-main">
+
+    <!-- Workflow Progress Strip -->
+    <div class="workflow-strip">
+      <div class="wf-steps">
+        <div class="wf-step active"><span class="wf-num">1</span> Input NUP</div>
+        <span class="wf-arrow">&#10132;</span>
+        <div class="wf-step"><span class="wf-num">2</span> PO &amp; Workshop</div>
+        <span class="wf-arrow">&#10132;</span>
+        <div class="wf-step"><span class="wf-num">3</span> Invoice Tracking</div>
+        <span class="wf-arrow">&#10132;</span>
+        <div class="wf-step"><span class="wf-num">4</span> BAL &amp; BAST</div>
+        <span class="wf-arrow">&#10132;</span>
+        <div class="wf-step"><span class="wf-num">5</span> Pelunasan &amp; Margin</div>
+      </div>
+      <div>
+        <button class="btn btn-primary" onclick="openModalNup()">+ Buat NUP Baru</button>
+      </div>
+    </div>
+
+    <!-- KPI Stats Cards -->
+    <section class="kpi-row" id="kpi-section">
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span>Total Nilai Kontrak</span>
+          <span>&#128188;</span>
+        </div>
+        <div class="kpi-val electric" id="kpi-kontrak">Rp 0</div>
+        <div class="kpi-sub" id="kpi-nup-count">0 NUP Terdaftar</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span>Total Tagihan (Invoice)</span>
+          <span>&#128196;</span>
+        </div>
+        <div class="kpi-val green" id="kpi-tagihan">Rp 0</div>
+        <div class="kpi-sub" id="kpi-tagihan-lunas">Lunas: Rp 0</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span>Total Pengeluaran</span>
+          <span>&#128178;</span>
+        </div>
+        <div class="kpi-val amber" id="kpi-pengeluaran">Rp 0</div>
+        <div class="kpi-sub" id="kpi-pengeluaran-po">PO &amp; Pengeluaran Unik</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span>Profit Margin Estimasi</span>
+          <span>&#128176;</span>
+        </div>
+        <div class="kpi-val" id="kpi-margin">Rp 0</div>
+        <div class="kpi-sub">Kontrak dikurangi Pengeluaran</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span>Late Schedule Alert</span>
+          <span>&#9888;&#65039;</span>
+        </div>
+        <div class="kpi-val red" id="kpi-late">0 Job</div>
+        <div class="kpi-sub">Perlu modifikasi jadwal</div>
+      </div>
+    </section>
+
+    <!-- TAB 1: OVERVIEW -->
+    <section id="tab-overview" class="tab-pane">
+      <div class="content-panel">
+        <div class="panel-header">
+          <div class="panel-title">Daftar NUP &amp; Ringkasan Keuangan Proyek</div>
+          <div class="panel-controls">
+            <input type="text" class="search-box" id="search-overview" placeholder="Cari nomor NUP, customer, area..." onkeyup="filterOverview()" />
+            <button class="btn btn-secondary" onclick="loadAllData()">&#8635; Refresh Data</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="custom-table" id="table-overview">
+            <thead>
+              <tr>
+                <th>No NUP</th>
+                <th>Customer</th>
+                <th>Area / Deskripsi</th>
+                <th>Nilai Kontrak</th>
+                <th>Tagihan Terbit</th>
+                <th>Pengeluaran</th>
+                <th>Margin</th>
+                <th>Job Workshop</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-overview">
+              <tr><td colspan="10" style="text-align:center;">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: INPUT NUP -->
+    <section id="tab-nup" class="tab-pane" style="display:none;">
+      <div class="content-panel">
+        <div class="panel-header">
+          <div class="panel-title">Manajemen NUP (Nomor Urut Pekerjaan)</div>
+          <div class="panel-controls">
+            <button class="btn btn-primary" onclick="openModalNup()">+ Input NUP Baru</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Nomor NUP</th>
+                <th>Customer</th>
+                <th>Deskripsi Pekerjaan</th>
+                <th>Area</th>
+                <th>Nilai Kontrak</th>
+                <th>Target Waktu</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-nup"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: TRACKING TAGIHAN / INVOICE & BAST -->
+    <section id="tab-tagihan" class="tab-pane" style="display:none;">
+      <div class="content-panel">
+        <div class="panel-header">
+          <div class="panel-title">Tracking Tagihan (Invoice s/d BAST)</div>
+          <div class="panel-controls">
+            <button class="btn btn-primary" onclick="openModalTagihan()">+ Terbitkan Tagihan</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>No Tagihan</th>
+                <th>NUP / Customer</th>
+                <th>Uraian Pekerjaan</th>
+                <th>Nilai (Rp)</th>
+                <th>Tgl Tagihan</th>
+                <th>Status Siklus</th>
+                <th>Dokumen BAL / BAST</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-tagihan"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: WORKSHOP & LATE SCHEDULE -->
+    <section id="tab-workshop" class="tab-pane" style="display:none;">
+      <div class="content-panel">
+        <div class="panel-header">
+          <div class="panel-title">Pelacakan Jadwal Workshop &amp; Modifikasi Terlambat</div>
+          <div class="panel-controls">
+            <button class="btn btn-primary" onclick="openModalJob()">+ Tambah Job Workshop</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>NUP</th>
+                <th>Pekerjaan Workshop</th>
+                <th>Area</th>
+                <th>Plan Selesai</th>
+                <th>Progress</th>
+                <th>Manpower (Req/Act)</th>
+                <th>DP Bayar</th>
+                <th>Status Late</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-workshop"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: ATPA -->
+    <section id="tab-atpa" class="tab-pane" style="display:none;">
+      <div class="content-panel">
+        <div class="panel-header">
+          <div class="panel-title">Pencatatan ATPA (Alat / Material Pekerjaan)</div>
+          <div class="panel-controls">
+            <button class="btn btn-primary" onclick="openModalAtpa()">+ Tambah ATPA</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>No ATPA</th>
+                <th>NUP</th>
+                <th>Item / Peralatan</th>
+                <th>Nilai (Rp)</th>
+                <th>PIC</th>
+                <th>Tanggal</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-atpa"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 6: PENGELUARAN -->
+    <section id="tab-pengeluaran" class="tab-pane" style="display:none;">
+      <div class="content-panel">
+        <div class="panel-header">
+          <div class="panel-title">Pengeluaran Biaya (PO &amp; Biaya Unik Proyek)</div>
+          <div class="panel-controls">
+            <button class="btn btn-primary" onclick="openModalPengeluaran()">+ Catat Pengeluaran</button>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>NUP</th>
+                <th>Jenis</th>
+                <th>No PO / Vendor</th>
+                <th>Deskripsi Pengeluaran</th>
+                <th>Nilai (Rp)</th>
+                <th>Tgl Bayar</th>
+                <th>Status Bayar</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-pengeluaran"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: NUP -->
+  <div class="modal-overlay" id="modal-nup">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-nup-title">Input NUP Baru</div>
+        <button class="btn-close" onclick="closeModals()">&times;</button>
+      </div>
+      <form id="form-nup" onsubmit="saveNup(event)">
+        <div class="modal-body">
+          <input type="hidden" id="nup-id" />
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nomor NUP *</label>
+              <input type="text" class="form-control" id="nup-number" placeholder="Contoh: NUP-2026-004" required />
+            </div>
+            <div class="form-group">
+              <label>Customer *</label>
+              <input type="text" class="form-control" id="nup-customer" placeholder="Nama Client/Customer" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Deskripsi Kontrak / Pekerjaan</label>
+            <textarea class="form-control" id="nup-desc" rows="3" placeholder="Uraian pekerjaan..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Area / Lokasi</label>
+              <input type="text" class="form-control" id="nup-area" placeholder="WS Bandung, Hangar, dsb" />
+            </div>
+            <div class="form-group">
+              <label>Nilai Kontrak (Rp)</label>
+              <input type="number" class="form-control" id="nup-nilai" placeholder="0" min="0" step="1000" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tanggal Mulai</label>
+              <input type="date" class="form-control" id="nup-start" />
+            </div>
+            <div class="form-group">
+              <label>Tanggal Selesai</label>
+              <input type="date" class="form-control" id="nup-end" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Status NUP</label>
+            <select class="form-control" id="nup-status">
+              <option value="aktif">Aktif</option>
+              <option value="selesai">Selesai</option>
+              <option value="hold">Hold</option>
+              <option value="batal">Batal</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModals()">Batal</button>
+          <button type="submit" class="btn btn-primary">&#128190; Simpan NUP</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: TAGIHAN -->
+  <div class="modal-overlay" id="modal-tagihan">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-tagihan-title">Terbitkan Tagihan (Invoice)</div>
+        <button class="btn-close" onclick="closeModals()">&times;</button>
+      </div>
+      <form id="form-tagihan" onsubmit="saveTagihan(event)">
+        <div class="modal-body">
+          <input type="hidden" id="tagihan-id" />
+          <div class="form-group">
+            <label>Pilih NUP Terkait *</label>
+            <select class="form-control" id="tagihan-nup-id" required></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nomor Tagihan *</label>
+              <input type="text" class="form-control" id="tagihan-no" placeholder="Contoh: INV/IAS/2026/050" required />
+            </div>
+            <div class="form-group">
+              <label>Nilai Tagihan (Rp) *</label>
+              <input type="number" class="form-control" id="tagihan-nilai" placeholder="0" min="0" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Uraian Pekerjaan yang Ditagihkan *</label>
+            <textarea class="form-control" id="tagihan-pekerjaan" rows="2" placeholder="Termin 1 / DP / Full..." required></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tanggal Tagihan</label>
+              <input type="date" class="form-control" id="tagihan-tgl" />
+            </div>
+            <div class="form-group">
+              <label>Status Tagihan</label>
+              <select class="form-control" id="tagihan-status">
+                <option value="draft">Draft</option>
+                <option value="dikirim">Dikirim ke Customer</option>
+                <option value="bal">BAL (Berita Acara Lapangan)</option>
+                <option value="bast">BAST</option>
+                <option value="lunas">Lunas (Paid)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModals()">Batal</button>
+          <button type="submit" class="btn btn-primary">&#128190; Simpan Tagihan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: BAL & BAST -->
+  <div class="modal-overlay" id="modal-bast">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-bast-title">Dokumen Berita Acara (BAL / BAST)</div>
+        <button class="btn-close" onclick="closeModals()">&times;</button>
+      </div>
+      <form id="form-bast" onsubmit="saveBastBal(event)">
+        <div class="modal-body">
+          <input type="hidden" id="doc-tagihan-id" />
+          <div class="form-group">
+            <label>Jenis Dokumen</label>
+            <select class="form-control" id="doc-type" onchange="toggleDocFields()">
+              <option value="bal">BAL (Berita Acara Lapangan)</option>
+              <option value="bast">BAST (Berita Acara Serah Terima)</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nomor Dokumen *</label>
+              <input type="text" class="form-control" id="doc-no" placeholder="Contoh: BAL-2026-012" required />
+            </div>
+            <div class="form-group">
+              <label>Tanggal Dokumen</label>
+              <input type="date" class="form-control" id="doc-tgl" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nama Penerima / PIC Lapangan</label>
+              <input type="text" class="form-control" id="doc-penerima" placeholder="Nama..." />
+            </div>
+            <div class="form-group" id="group-jabatan">
+              <label>Jabatan Penerima</label>
+              <input type="text" class="form-control" id="doc-jabatan" placeholder="Manager / Inspector..." />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Catatan / Keterangan Serah Terima</label>
+            <textarea class="form-control" id="doc-catatan" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModals()">Batal</button>
+          <button type="submit" class="btn btn-primary">&#128190; Simpan Dokumen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: WORKSHOP JOB & LATE SCHEDULE MODIFICATION -->
+  <div class="modal-overlay" id="modal-job">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-job-title">Pekerjaan Workshop &amp; Jadwal</div>
+        <button class="btn-close" onclick="closeModals()">&times;</button>
+      </div>
+      <form id="form-job" onsubmit="saveJob(event)">
+        <div class="modal-body">
+          <input type="hidden" id="job-id" />
+          <div class="form-group">
+            <label>Pilih NUP Terkait *</label>
+            <select class="form-control" id="job-nup-id" required></select>
+          </div>
+          <div class="form-group">
+            <label>Nama Pekerjaan Workshop *</label>
+            <input type="text" class="form-control" id="job-nama" placeholder="Contoh: Overhaul Hydraulic Unit" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Area Kerja</label>
+              <input type="text" class="form-control" id="job-area" placeholder="WS Bandung..." />
+            </div>
+            <div class="form-group">
+              <label>Progress Selesai (%)</label>
+              <input type="number" class="form-control" id="job-progress" min="0" max="100" value="0" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Plan Mulai</label>
+              <input type="date" class="form-control" id="job-plan-start" />
+            </div>
+            <div class="form-group">
+              <label>Plan Selesai (Target Deadline)</label>
+              <input type="date" class="form-control" id="job-plan-end" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Manpower Dibutuhkan</label>
+              <input type="number" class="form-control" id="job-mp-req" min="0" value="1" />
+            </div>
+            <div class="form-group">
+              <label>Manpower Tersedia</label>
+              <input type="number" class="form-control" id="job-mp-act" min="0" value="1" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Status DP Kontrak</label>
+              <select class="form-control" id="job-dp">
+                <option value="1">Sudah Dibayar (DP Masuk)</option>
+                <option value="0">Belum Bayar DP</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Status Pekerjaan</label>
+              <select class="form-control" id="job-status">
+                <option value="belum_mulai">Belum Mulai</option>
+                <option value="on_progress">On Progress</option>
+                <option value="selesai">Selesai</option>
+                <option value="hold">Hold</option>
+              </select>
+            </div>
+          </div>
+          <!-- MODIFIKASI JADWAL JIKA TERLAMBAT -->
+          <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); border-radius:8px; padding:12px; margin-top:8px;">
+            <div style="font-size:12px; font-weight:700; color:#f87171; margin-bottom:8px;">
+              &#9888;&#65039; Modifikasi Jadwal Jika Terlambat (Late Schedule)
+            </div>
+            <div class="form-group">
+              <label style="color:#fca5a5;">Tandai Terlambat?</label>
+              <select class="form-control" id="job-late">
+                <option value="0">Normal (Tepat Waktu)</option>
+                <option value="1">Terlambat (Late Schedule)</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-top:8px;">
+              <label style="color:#fca5a5;">Alasan Keterlambatan / Tindakan Koreksi</label>
+              <textarea class="form-control" id="job-alasan-late" rows="2" placeholder="Misal: Menunggu spare part impor, kekurangan teknisi spesialis..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModals()">Batal</button>
+          <button type="submit" class="btn btn-primary">&#128190; Simpan Workshop Job</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ATPA -->
+  <div class="modal-overlay" id="modal-atpa">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Pencatatan ATPA</div>
+        <button class="btn-close" onclick="closeModals()">&times;</button>
+      </div>
+      <form id="form-atpa" onsubmit="saveAtpa(event)">
+        <div class="modal-body">
+          <input type="hidden" id="atpa-id" />
+          <div class="form-group">
+            <label>Pilih NUP Terkait *</label>
+            <select class="form-control" id="atpa-nup-id" required></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nomor ATPA *</label>
+              <input type="text" class="form-control" id="atpa-no" placeholder="ATPA-2026-001" required />
+            </div>
+            <div class="form-group">
+              <label>Tanggal ATPA</label>
+              <input type="date" class="form-control" id="atpa-tgl" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Item / Peralatan *</label>
+            <input type="text" class="form-control" id="atpa-item" placeholder="Nama peralatan..." required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nilai (Rp)</label>
+              <input type="number" class="form-control" id="atpa-nilai" min="0" value="0" />
+            </div>
+            <div class="form-group">
+              <label>PIC (Penanggung Jawab)</label>
+              <input type="text" class="form-control" id="atpa-pic" placeholder="Nama PIC..." />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Status ATPA</label>
+            <select class="form-control" id="atpa-status">
+              <option value="open">Open</option>
+              <option value="closed">Closed</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModals()">Batal</button>
+          <button type="submit" class="btn btn-primary">&#128190; Simpan ATPA</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PENGELUARAN -->
+  <div class="modal-overlay" id="modal-pengeluaran">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Pencatatan Biaya Pengeluaran</div>
+        <button class="btn-close" onclick="closeModals()">&times;</button>
+      </div>
+      <form id="form-pengeluaran" onsubmit="savePengeluaran(event)">
+        <div class="modal-body">
+          <input type="hidden" id="pengeluaran-id" />
+          <div class="form-group">
+            <label>Pilih NUP Terkait *</label>
+            <select class="form-control" id="pengeluaran-nup-id" required></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Jenis Pengeluaran</label>
+              <select class="form-control" id="pengeluaran-jenis" onchange="togglePoFields()">
+                <option value="po">Pengeluaran PO (Purchase Order)</option>
+                <option value="unik">Pengeluaran Unik / Khusus Proyek</option>
+                <option value="lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Nilai Pengeluaran (Rp) *</label>
+              <input type="number" class="form-control" id="pengeluaran-nilai" min="0" required />
+            </div>
+          </div>
+          <div class="form-row" id="row-po">
+            <div class="form-group">
+              <label>Nomor PO</label>
+              <input type="text" class="form-control" id="pengeluaran-no-po" placeholder="PO-IAS-2026-..." />
+            </div>
+            <div class="form-group">
+              <label>Nama Vendor / Supplier</label>
+              <input type="text" class="form-control" id="pengeluaran-vendor" placeholder="PT Supplier..." />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Deskripsi Pengeluaran *</label>
+            <textarea class="form-control" id="pengeluaran-desc" rows="2" placeholder="Bahan baku, jasa subcon, transport..." required></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tanggal Bayar</label>
+              <input type="date" class="form-control" id="pengeluaran-tgl" />
+            </div>
+            <div class="form-group">
+              <label>Status Pembayaran</label>
+              <select class="form-control" id="pengeluaran-status">
+                <option value="lunas">Lunas</option>
+                <option value="sebagian">Sebagian</option>
+                <option value="belum">Belum Bayar</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModals()">Batal</button>
+          <button type="submit" class="btn btn-primary">&#128190; Simpan Pengeluaran</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-box"></div>
+
+  <script>
+    // State
+    const API_BASE = 'industrial_api.php';
+    let appData = {
+      nups: [],
+      tagihans: [],
+      jobs: [],
+      atpas: [],
+      pengeluarans: [],
+      stats: {}
+    };
+
+    // Live Clock
+    function updateClock() {
+      const now = new Date();
+      const str = now.toTimeString().split(' ')[0];
+      const el = document.getElementById('live-time');
+      if (el) el.textContent = str;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Tab Switcher
+    function switchTab(tabId) {
+      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.style.display = 'none');
+
+      const clickedBtn = Array.from(document.querySelectorAll('.nav-tab')).find(b => b.getAttribute('onclick')?.includes(tabId));
+      if (clickedBtn) clickedBtn.classList.add('active');
+
+      const targetPane = document.getElementById('tab-' + tabId);
+      if (targetPane) targetPane.style.display = 'block';
+
+      // Load specific data if needed
+      if (tabId === 'tagihan') loadTagihans();
+      if (tabId === 'workshop') loadWorkshopJobs();
+      if (tabId === 'atpa') loadAtpas();
+      if (tabId === 'pengeluaran') loadPengeluarans();
+    }
+
+    // Currency Formatter
+    function formatRp(num) {
+      if (isNaN(num) || num === null) return 'Rp 0';
+      return 'Rp ' + Number(num).toLocaleString('id-ID');
+    }
+
+    // Toast
+    function showToast(msg, type = 'success') {
+      const box = document.getElementById('toast-box');
+      const t = document.createElement('div');
+      t.className = 'toast ' + type;
+      t.innerHTML = (type === 'success' ? '&#10004;&#65039; ' : '&#9888;&#65039; ') + msg;
+      box.appendChild(t);
+      setTimeout(() => { t.remove(); }, 3500);
+    }
+
+    // Modal Handlers
+    function closeModals() {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+    }
+
+    // Populate NUP dropdowns
+    function populateNupDropdowns() {
+      const dropdowns = ['tagihan-nup-id', 'job-nup-id', 'atpa-nup-id', 'pengeluaran-nup-id'];
+      dropdowns.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.innerHTML = '<option value="">-- Pilih NUP --</option>' +
+          appData.nups.map(n => `<option value="${n.id}">${n.nup_number} - ${n.customer}</option>`).join('');
+      });
+    }
+
+    // Load Overview & Stats
+    async function loadAllData() {
+      try {
+        const res = await fetch(`${API_BASE}?action=summary`);
+        const data = await res.json();
+        if (data.ok) {
+          appData.nups = data.nups || [];
+          appData.stats = data.stats || {};
+
+          // Update KPI
+          document.getElementById('kpi-kontrak').textContent = formatRp(data.stats.totalKontrak);
+          document.getElementById('kpi-nup-count').textContent = `${data.stats.nupAktif} Aktif / ${data.stats.totalNup} Total NUP`;
+          document.getElementById('kpi-tagihan').textContent = formatRp(data.stats.totalTagihan);
+          document.getElementById('kpi-tagihan-lunas').textContent = `Lunas: ${formatRp(data.stats.tagihanLunas)}`;
+          document.getElementById('kpi-pengeluaran').textContent = formatRp(data.stats.totalPengeluaran);
+          document.getElementById('kpi-pengeluaran-po').textContent = `PO: ${formatRp(data.stats.pengeluaranPo)}`;
+          document.getElementById('kpi-margin').textContent = formatRp(data.stats.margin);
+          document.getElementById('kpi-late').textContent = `${data.stats.jobLate} Job Terlambat`;
+
+          // Update Badges
+          document.getElementById('badge-nup').textContent = data.stats.totalNup;
+          document.getElementById('badge-late').textContent = `${data.stats.jobLate} Late`;
+
+          renderOverviewTable(appData.nups);
+          renderNupTable(appData.nups);
+          populateNupDropdowns();
+        }
+      } catch (err) {
+        console.error('Fetch summary error:', err);
+        showToast('Gagal terhubung ke database. Periksa status MySQL.', 'error');
+      }
+    }
+
+    // Render Overview Table
+    function renderOverviewTable(items) {
+      const tbody = document.getElementById('tbody-overview');
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:24px;">Belum ada data NUP tersimpan. Silakan klik "+ Buat NUP Baru".</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(n => {
+        const margin = Number(n.nilai_kontrak || 0) - Number(n.sum_pengeluaran || 0);
+        return `
+          <tr>
+            <td><strong>${n.nup_number}</strong></td>
+            <td>${n.customer}</td>
+            <td><div style="font-size:12px;">${n.area || '-'}</div><div style="font-size:11px; color:var(--text-muted);">${n.description || ''}</div></td>
+            <td><strong>${formatRp(n.nilai_kontrak)}</strong></td>
+            <td>${formatRp(n.sum_tagihan)}</td>
+            <td>${formatRp(n.sum_pengeluaran)}</td>
+            <td style="color:${margin >= 0 ? '#34d399' : '#f87171'}; font-weight:700;">${formatRp(margin)}</td>
+            <td>
+              <span>${n.total_job} Job</span>
+              ${Number(n.job_late) > 0 ? `<span class="status-pill late" style="margin-left:6px;">${n.job_late} Late</span>` : ''}
+            </td>
+            <td><span class="status-pill ${n.status}">${n.status}</span></td>
+            <td>
+              <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="editNup(${n.id})">Edit</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Render NUP Table
+    function renderNupTable(items) {
+      const tbody = document.getElementById('tbody-nup');
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Belum ada NUP.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(n => `
+        <tr>
+          <td><strong>${n.nup_number}</strong></td>
+          <td>${n.customer}</td>
+          <td>${n.description || '-'}</td>
+          <td>${n.area || '-'}</td>
+          <td><strong>${formatRp(n.nilai_kontrak)}</strong></td>
+          <td>${n.tgl_mulai || '-'} s/d ${n.tgl_selesai || '-'}</td>
+          <td><span class="status-pill ${n.status}">${n.status}</span></td>
+          <td>
+            <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="editNup(${n.id})">Edit</button>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteNup(${n.id})">Hapus</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Filter Overview
+    function filterOverview() {
+      const q = document.getElementById('search-overview').value.toLowerCase();
+      const filtered = appData.nups.filter(n =>
+        n.nup_number.toLowerCase().includes(q) ||
+        n.customer.toLowerCase().includes(q) ||
+        (n.area && n.area.toLowerCase().includes(q))
+      );
+      renderOverviewTable(filtered);
+    }
+
+    // MODAL NUP
+    function openModalNup(item = null) {
+      document.getElementById('form-nup').reset();
+      document.getElementById('nup-id').value = item ? item.id : '';
+      document.getElementById('modal-nup-title').textContent = item ? 'Edit Data NUP' : 'Input NUP Baru';
+      if (item) {
+        document.getElementById('nup-number').value = item.nup_number;
+        document.getElementById('nup-customer').value = item.customer;
+        document.getElementById('nup-desc').value = item.description || '';
+        document.getElementById('nup-area').value = item.area || '';
+        document.getElementById('nup-nilai').value = item.nilai_kontrak || 0;
+        document.getElementById('nup-start').value = item.tgl_mulai || '';
+        document.getElementById('nup-end').value = item.tgl_selesai || '';
+        document.getElementById('nup-status').value = item.status || 'aktif';
+      }
+      document.getElementById('modal-nup').classList.add('show');
+    }
+
+    function editNup(id) {
+      const item = appData.nups.find(n => n.id == id);
+      if (item) openModalNup(item);
+    }
+
+    async function saveNup(e) {
+      e.preventDefault();
+      const payload = {
+        id: document.getElementById('nup-id').value || null,
+        nup_number: document.getElementById('nup-number').value,
+        customer: document.getElementById('nup-customer').value,
+        description: document.getElementById('nup-desc').value,
+        area: document.getElementById('nup-area').value,
+        nilai_kontrak: document.getElementById('nup-nilai').value,
+        tgl_mulai: document.getElementById('nup-start').value,
+        tgl_selesai: document.getElementById('nup-end').value,
+        status: document.getElementById('nup-status').value,
+      };
+      try {
+        const res = await fetch(`${API_BASE}?action=save_nup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.ok) {
+          showToast(data.message || 'NUP tersimpan!');
+          closeModals();
+          loadAllData();
+        } else {
+          showToast(data.error || 'Gagal menyimpan NUP', 'error');
+        }
+      } catch (err) {
+        showToast('Koneksi gagal', 'error');
+      }
+    }
+
+    async function deleteNup(id) {
+      if (!confirm('Yakin ingin menghapus NUP ini? Seluruh data tagihan dan jadwal terkait akan ikut terhapus.')) return;
+      try {
+        const res = await fetch(`${API_BASE}?action=delete_nup&id=${id}`);
+        const data = await res.json();
+        if (data.ok) {
+          showToast('NUP berhasil dihapus');
+          loadAllData();
+        }
+      } catch (err) {
+        showToast('Gagal menghapus', 'error');
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // TAGIHAN & BAST
+    // ─────────────────────────────────────────────
+    async function loadTagihans() {
+      try {
+        const res = await fetch(`${API_BASE}?action=get_tagihan`);
+        const data = await res.json();
+        if (data.ok) {
+          appData.tagihans = data.data || [];
+          document.getElementById('badge-tagihan').textContent = appData.tagihans.length;
+          renderTagihanTable(appData.tagihans);
+        }
+      } catch (err) {
+        showToast('Gagal memuat tagihan', 'error');
+      }
+    }
+
+    function renderTagihanTable(items) {
+      const tbody = document.getElementById('tbody-tagihan');
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Belum ada tagihan. Silakan klik "+ Terbitkan Tagihan".</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(t => `
+        <tr>
+          <td><strong>${t.no_tagihan}</strong></td>
+          <td><span style="color:var(--electric);">${t.nup_number}</span> - ${t.customer}</td>
+          <td>${t.pekerjaan}</td>
+          <td><strong>${formatRp(t.nilai)}</strong></td>
+          <td>${t.tgl_tagihan || '-'}</td>
+          <td><span class="status-pill ${t.status}">${t.status}</span></td>
+          <td>
+            <div style="font-size:11px;">
+              ${t.no_bal ? `<div>BAL: <strong>${t.no_bal}</strong></div>` : '<span style="color:var(--text-muted);">BAL belum ada</span>'}
+              ${t.no_bast ? `<div>BAST: <strong>${t.no_bast}</strong></div>` : '<span style="color:var(--text-muted);">BAST belum ada</span>'}
+            </div>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="openDocModal(${t.id})">&#128196; BAL/BAST</button>
+              <button class="btn btn-success" style="padding:4px 8px; font-size:11px;" onclick="setLunas(${t.id})">&#10004; Lunas</button>
+              <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteTagihan(${t.id})">&times;</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openModalTagihan(item = null) {
+      document.getElementById('form-tagihan').reset();
+      document.getElementById('tagihan-id').value = item ? item.id : '';
+      document.getElementById('modal-tagihan-title').textContent = item ? 'Edit Tagihan' : 'Terbitkan Tagihan (Invoice)';
+      if (item) {
+        document.getElementById('tagihan-nup-id').value = item.nup_id;
+        document.getElementById('tagihan-no').value = item.no_tagihan;
+        document.getElementById('tagihan-nilai').value = item.nilai;
+        document.getElementById('tagihan-pekerjaan').value = item.pekerjaan;
+        document.getElementById('tagihan-tgl').value = item.tgl_tagihan || '';
+        document.getElementById('tagihan-status').value = item.status || 'draft';
+      }
+      document.getElementById('modal-tagihan').classList.add('show');
+    }
+
+    async function saveTagihan(e) {
+      e.preventDefault();
+      const payload = {
+        id: document.getElementById('tagihan-id').value || null,
+        nup_id: document.getElementById('tagihan-nup-id').value,
+        no_tagihan: document.getElementById('tagihan-no').value,
+        nilai: document.getElementById('tagihan-nilai').value,
+        pekerjaan: document.getElementById('tagihan-pekerjaan').value,
+        tgl_tagihan: document.getElementById('tagihan-tgl').value,
+        status: document.getElementById('tagihan-status').value,
+      };
+      try {
+        const res = await fetch(`${API_BASE}?action=save_tagihan`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.ok) {
+          showToast('Tagihan berhasil disimpan');
+          closeModals();
+          loadTagihans();
+          loadAllData();
+        } else {
+          showToast(data.error || 'Gagal menyimpan', 'error');
+        }
+      } catch (err) {
+        showToast('Koneksi gagal', 'error');
+      }
+    }
+
+    async function setLunas(id) {
+      if (!confirm('Tandai tagihan ini sebagai Lunas (Paid)?')) return;
+      try {
+        const res = await fetch(`${API_BASE}?action=update_tagihan_status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, status: 'lunas' })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          showToast('Status tagihan diperbarui ke LUNAS');
+          loadTagihans();
+          loadAllData();
+        }
+      } catch (err) {
+        showToast('Gagal update', 'error');
+      }
+    }
+
+    async function deleteTagihan(id) {
+      if (!confirm('Hapus tagihan ini?')) return;
+      try {
+        const res = await fetch(`${API_BASE}?action=delete_tagihan&id=${id}`);
+        const data = await res.json();
+        if (data.ok) {
+          showToast('Tagihan dihapus');
+          loadTagihans();
+          loadAllData();
+        }
+      } catch (err) {
+        showToast('Gagal', 'error');
+      }
+    }
+
+    function openDocModal(tagihanId) {
+      document.getElementById('form-bast').reset();
+      document.getElementById('doc-tagihan-id').value = tagihanId;
+      document.getElementById('doc-tgl').value = new Date().toISOString().split('T')[0];
+      document.getElementById('modal-bast').classList.add('show');
+    }
+
+    function toggleDocFields() {
+      const type = document.getElementById('doc-type').value;
+      document.getElementById('group-jabatan').style.display = type === 'bast' ? 'block' : 'none';
+    }
+
+    async function saveBastBal(e) {
+      e.preventDefault();
+      const type = document.getElementById('doc-type').value;
+      const tagihan_id = document.getElementById('doc-tagihan-id').value;
+      const action = type === 'bal' ? 'save_bal' : 'save_bast';
+      const payload = {
+        tagihan_id,
+        no_bal: document.getElementById('doc-no').value,
+        no_bast: document.getElementById('doc-no').value,
+        tgl_bal: document.getElementById('doc-tgl').value,
+        tgl_bast: document.getElementById('doc-tgl').value,
+        diterima_oleh: document.getElementById('doc-penerima').value,
+        penerima: document.getElementById('doc-penerima').value,
+        jabatan: document.getElementById('doc-jabatan').value,
+        catatan: document.getElementById('doc-catatan').value,
+      };
+      try {
+        const res = await fetch(`${API_BASE}?action=${action}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.ok) {
+          showToast(data.message || 'Dokumen berhasil disimpan');
+          closeModals();
+          loadTagihans();
+        } else {
+          showToast(data.error || 'Gagal menyimpan', 'error');
+        }
+      } catch (err) {
+        showToast('Koneksi gagal', 'error');
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // WORKSHOP JOBS & LATE SCHEDULE
+    // ─────────────────────────────────────────────
+    async function loadWorkshopJobs() {
+      try {
+        const res = await fetch(`${API_BASE}?action=get_workshop_jobs`);
+        const data = await res.json();
+        if (data.ok) {
+          appData.jobs = data.data || [];
+          renderWorkshopTable(appData.jobs);
+        }
+      } catch (err) {
+        showToast('Gagal memuat job workshop', 'error');
+      }
+    }
+
+    function renderWorkshopTable(items) {
+      const tbody = document.getElementById('tbody-workshop');
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">Belum ada pekerjaan workshop.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(j => {
+        const isLate = Number(j.calculated_late) === 1;
+        return `
+          <tr>
+            <td><strong>${j.nup_number}</strong></td>
+            <td>
+              <strong>${j.nama_pekerjaan}</strong>
+              ${j.alasan_keterlambatan ? `<div style="font-size:11px; color:#f87171; margin-top:2px;">&#9888; Catatan: ${j.alasan_keterlambatan}</div>` : ''}
+            </td>
+            <td>${j.area || '-'}</td>
+            <td>${j.tgl_plan_selesai || '-'}</td>
+            <td>
+              <div style="font-weight:600; font-size:12px;">${j.progress_pct || 0}%</div>
+              <div class="prog-track">
+                <div class="prog-fill ${isLate ? 'late' : ''}" style="width:${j.progress_pct || 0}%;"></div>
+              </div>
+            </td>
+            <td>${j.manpower_dibutuhkan || 0} / ${j.manpower_tersedia || 0} Org</td>
+            <td>
+              ${Number(j.dp_dibayar) === 1 ? '<span style="color:#34d399; font-weight:600;">&#10004; DP Masuk</span>' : '<span style="color:#fbbf24;">Belum DP</span>'}
+            </td>
+            <td>
+              ${isLate ? '<span class="status-pill late">&#9888; TERLAMBAT</span>' : '<span class="status-pill aktif">TEPAT WAKTU</span>'}
+            </td>
+            <td>
+              <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="editJob(${j.id})">Revisi</button>
+              <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteJob(${j.id})">&times;</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openModalJob(item = null) {
+      document.getElementById('form-job').reset();
+      document.getElementById('job-id').value = item ? item.id : '';
+      document.getElementById('modal-job-title').textContent = item ? 'Modifikasi Jadwal & Job' : 'Tambah Job Workshop';
+      if (item) {
+        document.getElementById('job-nup-id').value = item.nup_id;
+        document.getElementById('job-nama').value = item.nama_pekerjaan;
+        document.getElementById('job-area').value = item.area || '';
+        document.getElementById('job-progress').value = item.progress_pct || 0;
+        document.getElementById('job-plan-start').value = item.tgl_plan_mulai || '';
+        document.getElementById('job-plan-end').value = item.tgl_plan_selesai || '';
+        document.getElementById('job-mp-req').value = item.manpower_dibutuhkan || 1;
+        document.getElementById('job-mp-act').value = item.manpower_tersedia || 1;
+        document.getElementById('job-dp').value = item.dp_dibayar || 0;
+        document.getElementById('job-status').value = item.status || 'belum_mulai';
+        document.getElementById('job-late').value = item.is_late || 0;
+        document.getElementById('job-alasan-late').value = item.alasan_keterlambatan || '';
+      }
+      document.getElementById('modal-job').classList.add('show');
+    }
+
+    function editJob(id) {
+      const item = appData.jobs.find(j => j.id == id);
+      if (item) openModalJob(item);
+    }
+
+    async function saveJob(e) {
+      e.preventDefault();
+      const payload = {
+        id: document.getElementById('job-id').value || null,
+        nup_id: document.getElementById('job-nup-id').value,
+        nama_pekerjaan: document.getElementById('job-nama').value,
+        area: document.getElementById('job-area').value,
+        progress_pct: document.getElementById('job-progress').value,
+        tgl_plan_mulai: document.getElementById('job-plan-start').value,
+        tgl_plan_selesai: document.getElementById('job-plan-end').value,
+        manpower_dibutuhkan: document.getElementById('job-mp-req').value,
+        manpower_tersedia: document.getElementById('job-mp-act').value,
+        dp_dibayar: document.getElementById('job-dp').value,
+        status: document.getElementById('job-status').value,
+        is_late: document.getElementById('job-late').value,
+        alasan_keterlambatan: document.getElementById('job-alasan-late').value,
+      };
+      try {
+        const res = await fetch(`${API_BASE}?action=save_workshop_job`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.ok) {
+          showToast('Job workshop tersimpan!');
+          closeModals();
+          loadWorkshopJobs();
+          loadAllData();
+        } else {
+          showToast(data.error || 'Gagal menyimpan', 'error');
+        }
+      } catch (err) {
+        showToast('Koneksi gagal', 'error');
+      }
+    }
+
+    async function deleteJob(id) {
+      if (!confirm('Hapus pekerjaan ini?')) return;
+      try {
+        const res = await fetch(`${API_BASE}?action=delete_workshop_job&id=${id}`);
+        const data = await res.json();
+        if (data.ok) {
+          showToast('Job berhasil dihapus');
+          loadWorkshopJobs();
+          loadAllData();
+        }
+      } catch (err) {
+        showToast('Gagal', 'error');
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // ATPA
+    // ─────────────────────────────────────────────
+    async function loadAtpas() {
+      try {
+        const res = await fetch(`${API_BASE}?action=get_atpa`);
+        const data = await res.json();
+        if (data.ok) {
+          appData.atpas = data.data || [];
+          document.getElementById('badge-atpa').textContent = appData.atpas.length;
+          renderAtpaTable(appData.atpas);
+        }
+      } catch (err) {
+        showToast('Gagal memuat ATPA', 'error');
+      }
+    }
+
+    function renderAtpaTable(items) {
+      const tbody = document.getElementById('tbody-atpa');
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Belum ada data ATPA.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(a => `
+        <tr>
+          <td><strong>${a.no_atpa}</strong></td>
+          <td>${a.nup_number}</td>
+          <td>${a.item}</td>
+          <td><strong>${formatRp(a.nilai)}</strong></td>
+          <td>${a.pic || '-'}</td>
+          <td>${a.tgl_atpa || '-'}</td>
+          <td><span class="status-pill ${a.status}">${a.status}</span></td>
+          <td>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteAtpa(${a.id})">&times;</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openModalAtpa() {
+      document.getElementById('form-atpa').reset();
+      document.getElementById('atpa-id').value = '';
+      document.getElementById('atpa-tgl').value = new Date().toISOString().split('T')[0];
+      document.getElementById('modal-atpa').classList.add('show');
+    }
+
+    async function saveAtpa(e) {
+      e.preventDefault();
+      const payload = {
+        nup_id: document.getElementById('atpa-nup-id').value,
+        no_atpa: document.getElementById('atpa-no').value,
+        tgl_atpa: document.getElementById('atpa-tgl').value,
+        item: document.getElementById('atpa-item').value,
+        nilai: document.getElementById('atpa-nilai').value,
+        pic: document.getElementById('atpa-pic').value,
+        status: document.getElementById('atpa-status').value,
+      };
+      try {
+        const res = await fetch(`${API_BASE}?action=save_atpa`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.ok) {
+          showToast('Data ATPA tersimpan');
+          closeModals();
+          loadAtpas();
+        } else {
+          showToast(data.error || 'Gagal menyimpan', 'error');
+        }
+      } catch (err) {
+        showToast('Koneksi gagal', 'error');
+      }
+    }
+
+    async function deleteAtpa(id) {
+      if (!confirm('Hapus ATPA ini?')) return;
+      try {
+        const res = await fetch(`${API_BASE}?action=delete_atpa&id=${id}`);
+        const data = await res.json();
+        if (data.ok) {
+          showToast('ATPA dihapus');
+          loadAtpas();
+        }
+      } catch (err) {
+        showToast('Gagal', 'error');
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // PENGELUARAN (PO & UNIK)
+    // ─────────────────────────────────────────────
+    async function loadPengeluarans() {
+      try {
+        const res = await fetch(`${API_BASE}?action=get_pengeluaran`);
+        const data = await res.json();
+        if (data.ok) {
+          appData.pengeluarans = data.data || [];
+          renderPengeluaranTable(appData.pengeluarans);
+        }
+      } catch (err) {
+        showToast('Gagal memuat pengeluaran', 'error');
+      }
+    }
+
+    function renderPengeluaranTable(items) {
+      const tbody = document.getElementById('tbody-pengeluaran');
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Belum ada pengeluaran dicatat.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = items.map(p => `
+        <tr>
+          <td><strong>${p.nup_number}</strong></td>
+          <td><span class="status-pill ${p.jenis}">${p.jenis.toUpperCase()}</span></td>
+          <td>${p.no_po || '-'} <div style="font-size:11px; color:var(--text-muted);">${p.nama_vendor || ''}</div></td>
+          <td>${p.deskripsi}</td>
+          <td><strong>${formatRp(p.nilai)}</strong></td>
+          <td>${p.tgl_bayar || p.tgl_po || '-'}</td>
+          <td><span class="status-pill ${p.status_bayar === 'lunas' ? 'lunas' : 'draft'}">${p.status_bayar}</span></td>
+          <td>
+            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deletePengeluaran(${p.id})">&times;</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openModalPengeluaran() {
+      document.getElementById('form-pengeluaran').reset();
+      document.getElementById('pengeluaran-id').value = '';
+      document.getElementById('pengeluaran-tgl').value = new Date().toISOString().split('T')[0];
+      document.getElementById('modal-pengeluaran').classList.add('show');
+    }
+
+    function togglePoFields() {
+      const jenis = document.getElementById('pengeluaran-jenis').value;
+      document.getElementById('row-po').style.display = jenis === 'po' ? 'grid' : 'none';
+    }
+
+    async function savePengeluaran(e) {
+      e.preventDefault();
+      const payload = {
+        nup_id: document.getElementById('pengeluaran-nup-id').value,
+        jenis: document.getElementById('pengeluaran-jenis').value,
+        no_po: document.getElementById('pengeluaran-no-po').value,
+        nama_vendor: document.getElementById('pengeluaran-vendor').value,
+        deskripsi: document.getElementById('pengeluaran-desc').value,
+        nilai: document.getElementById('pengeluaran-nilai').value,
+        tgl_bayar: document.getElementById('pengeluaran-tgl').value,
+        status_bayar: document.getElementById('pengeluaran-status').value,
+      };
+      try {
+        const res = await fetch(`${API_BASE}?action=save_pengeluaran`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.ok) {
+          showToast('Pengeluaran berhasil dicatat');
+          closeModals();
+          loadPengeluarans();
+          loadAllData();
+        } else {
+          showToast(data.error || 'Gagal menyimpan', 'error');
+        }
+      } catch (err) {
+        showToast('Koneksi gagal', 'error');
+      }
+    }
+
+    async function deletePengeluaran(id) {
+      if (!confirm('Hapus pengeluaran ini?')) return;
+      try {
+        const res = await fetch(`${API_BASE}?action=delete_pengeluaran&id=${id}`);
+        const data = await res.json();
+        if (data.ok) {
+          showToast('Pengeluaran dihapus');
+          loadPengeluarans();
+          loadAllData();
+        }
+      } catch (err) {
+        showToast('Gagal', 'error');
+      }
+    }
+
+    // Initial Load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAllData();
+    });
+  </script>
+</body>
+</html>

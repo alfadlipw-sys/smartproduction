@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Production Industrial Services – PT Indopelita Aircraft Services</title>
+  <meta name="description" content="Platform terintegrasi monitoring produksi, karyawan, S-Curve SLA, dan manajemen proyek – Smart Production Industrial Services by PT Indopelita Aircraft Services." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0b1a3b;
+      --navy-mid: #0f2457;
+      --navy-light: #1a3c8f;
+      --electric: #3b82f6;
+      --electric-glow: rgba(59,130,246,0.35);
+      --accent-red: #c8102e;
+      --accent-green: #6b8e23;
+      --glass-bg: rgba(255,255,255,0.05);
+      --glass-border: rgba(59,130,246,0.18);
+      --text-main: #e8f0fe;
+      --text-muted: #8ba7d4;
+      --card-bg: rgba(11,26,59,0.7);
+      --card-hover: rgba(26,60,143,0.5);
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.4);
+      --glow-blue: 0 0 20px rgba(59,130,246,0.3), 0 0 60px rgba(59,130,246,0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--navy);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(26,60,143,0.4) 0%, transparent 55%),
+        radial-gradient(ellipse at 100% 0%, rgba(200,16,46,0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(59,130,246,0.15) 0%, transparent 60%);
+      background-attachment: fixed;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+      animation: orbFloat 12s ease-in-out infinite;
+    }
+    .orb-1 { width: 500px; height: 500px; background: var(--electric); top: -150px; left: -150px; animation-delay: 0s; }
+    .orb-2 { width: 400px; height: 400px; background: var(--accent-red); top: 60%; right: -120px; animation-delay: -4s; }
+    .orb-3 { width: 350px; height: 350px; background: #3b82f6; bottom: -100px; left: 40%; animation-delay: -8s; }
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(30px,-30px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      background: rgba(11,26,59,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      height: 72px;
+      gap: 20px;
+    }
+    .topbar::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--accent-red) 0%, var(--accent-red) 33%, var(--accent-green) 33%, var(--accent-green) 66%, var(--navy-light) 66%, var(--navy-light) 100%);
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 14px; padding-left: 12px; }
+    .topbar-logo img { height: 46px; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(59,130,246,0.3)); }
+    .topbar-wordmark { display: flex; flex-direction: column; gap: 0; }
+    .topbar-brand { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: 1.5px; line-height: 1; }
+    .topbar-sub { font-size: 9px; color: var(--text-muted); letter-spacing: 0.5px; font-weight: 500; }
+    .topbar-divider { width: 1px; height: 36px; background: var(--glass-border); margin: 0 6px; }
+    .topbar-product { display: flex; flex-direction: column; }
+    .topbar-product-name { font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; color: var(--electric); letter-spacing: 1px; text-transform: uppercase; line-height: 1.1; }
+    .topbar-product-sub { font-size: 9px; color: var(--text-muted); letter-spacing: 0.5px; }
+    .topbar-spacer { flex: 1; }
+    .topbar-status {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(59,130,246,0.1); border: 1px solid var(--glass-border);
+      border-radius: 20px; padding: 6px 14px; font-size: 11px; color: var(--electric); font-weight: 600;
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #22c55e;
+      animation: pulse-dot 2s ease-in-out infinite; box-shadow: 0 0 6px #22c55e;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.3); }
+    }
+    .topbar-time {
+      font-family: 'Rajdhani', sans-serif; font-size: 16px; font-weight: 700;
+      color: var(--text-muted); letter-spacing: 1px; min-width: 70px; text-align: right;
+    }
+    .hero {
+      position: relative; z-index: 1;
+      padding: 80px 60px 60px;
+      display: flex; align-items: center; gap: 60px;
+      max-width: 1400px; margin: 0 auto;
+    }
+    .hero-left { flex: 1; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 30px; padding: 5px 16px; font-size: 11px; font-weight: 600;
+      color: var(--electric); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 24px;
+    }
+    .hero-tag::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--electric);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    .hero-title {
+      font-family: 'Rajdhani', sans-serif; font-size: 64px; font-weight: 700;
+      line-height: 1.0; color: #fff; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .hero-title .accent {
+      background: linear-gradient(135deg, var(--electric) 0%, #60a5fa 60%, #93c5fd 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-subtitle {
+      font-family: 'Rajdhani', sans-serif; font-size: 26px; font-weight: 500;
+      color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 28px;
+    }
+    .hero-desc { font-size: 14px; color: var(--text-muted); line-height: 1.8; max-width: 520px; margin-bottom: 40px; }
+    .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--electric), #2563eb); color: #fff;
+      border: none; border-radius: 12px; padding: 14px 28px; font-size: 14px;
+      font-weight: 700; letter-spacing: 0.5px; cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 20px rgba(59,130,246,0.4); transition: all 0.25s ease;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59,130,246,0.55); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 10px; background: var(--glass-bg);
+      color: var(--text-main); border: 1px solid var(--glass-border); border-radius: 12px;
+      padding: 14px 28px; font-size: 14px; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: all 0.25s ease; backdrop-filter: blur(8px);
+    }
+    .btn-secondary:hover { background: rgba(59,130,246,0.1); border-color: var(--electric); transform: translateY(-2px); }
+    .hero-kpis { display: flex; gap: 28px; margin-top: 48px; }
+    .kpi-item { display: flex; flex-direction: column; gap: 2px; }
+    .kpi-value { font-family: 'Rajdhani', sans-serif; font-size: 32px; font-weight: 700; color: #fff; line-height: 1; }
+    .kpi-label { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+    .kpi-sep { width: 1px; background: var(--glass-border); align-self: stretch; }
+    .hero-right {
+      flex-shrink: 0; position: relative; width: 320px; height: 320px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gear-ring {
+      position: absolute; width: 300px; height: 300px;
+      border: 2px solid rgba(59,130,246,0.15); border-radius: 50%;
+      animation: spin 30s linear infinite;
+    }
+    .gear-ring::before {
+      content: ''; position: absolute; inset: -10px;
+      border: 1px dashed rgba(59,130,246,0.08); border-radius: 50%;
+    }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes spinReverse { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+    .gear-inner {
+      width: 200px; height: 200px; border: 2px solid rgba(59,130,246,0.25);
+      border-radius: 50%; animation: spinReverse 20s linear infinite;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .gear-core {
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(26,60,143,0.8), rgba(11,26,59,0.9));
+      border: 2px solid rgba(59,130,246,0.4); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 30px rgba(59,130,246,0.3), inset 0 0 20px rgba(59,130,246,0.1); font-size: 52px;
+    }
+    .gear-dot {
+      position: absolute; width: 10px; height: 10px; border-radius: 50%;
+      background: var(--electric); box-shadow: 0 0 10px var(--electric);
+    }
+    .modules-section { position: relative; z-index: 1; padding: 0 60px 80px; max-width: 1400px; margin: 0 auto; }
+    .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 36px; }
+    .section-header::before {
+      content: ''; width: 4px; height: 28px;
+      background: linear-gradient(180deg, var(--electric), transparent); border-radius: 2px;
+    }
+    .section-title { font-family: 'Rajdhani', sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
+    .section-sub { font-size: 12px; color: var(--text-muted); margin-left: 4px; }
+    .modules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .module-card {
+      position: relative; background: var(--card-bg); border: 1px solid var(--glass-border);
+      border-radius: 18px; padding: 30px 26px; cursor: pointer; text-decoration: none;
+      overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(12px);
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .module-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(59,130,246,0.06) 0%, transparent 60%);
+      border-radius: inherit; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .module-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      border-radius: 0 0 18px 18px;
+      background: linear-gradient(90deg, var(--electric), transparent);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.35s ease;
+    }
+    .module-card:hover { background: var(--card-hover); border-color: rgba(59,130,246,0.4); transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.4), var(--glow-blue); }
+    .module-card:hover::before { opacity: 1; }
+    .module-card:hover::after { transform: scaleX(1); }
+    .module-card.accent-red::after { background: linear-gradient(90deg, var(--accent-red), transparent); }
+    .module-card.accent-green::after { background: linear-gradient(90deg, var(--accent-green), transparent); }
+    .module-card.accent-purple::after { background: linear-gradient(90deg, #a855f7, transparent); }
+    .module-card.accent-amber::after { background: linear-gradient(90deg, #f59e0b, transparent); }
+    .module-icon-wrap {
+      width: 58px; height: 58px; border-radius: 16px;
+      background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 28px;
+      transition: transform 0.3s ease, background 0.3s ease; flex-shrink: 0;
+    }
+    .module-card:hover .module-icon-wrap { transform: scale(1.1) rotate(-5deg); background: rgba(59,130,246,0.2); }
+    .module-card.accent-red .module-icon-wrap    { background: rgba(200,16,46,0.12); border-color: rgba(200,16,46,0.2); }
+    .module-card.accent-green .module-icon-wrap  { background: rgba(107,142,35,0.12); border-color: rgba(107,142,35,0.2); }
+    .module-card.accent-purple .module-icon-wrap { background: rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.2); }
+    .module-card.accent-amber .module-icon-wrap  { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.2); }
+    .module-title { font-family: 'Rajdhani', sans-serif; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .module-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+    .module-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .module-tag {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.8px; color: var(--electric);
+      text-transform: uppercase; background: rgba(59,130,246,0.1); padding: 3px 10px; border-radius: 20px;
+    }
+    .module-card.accent-red .module-tag   { color: #f87171; background: rgba(200,16,46,0.1); }
+    .module-card.accent-green .module-tag { color: #86efac; background: rgba(107,142,35,0.1); }
+    .module-card.accent-purple .module-tag{ color: #c4b5fd; background: rgba(168,85,247,0.1); }
+    .module-card.accent-amber .module-tag { color: #fcd34d; background: rgba(245,158,11,0.1); }
+    .module-arrow {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center; font-size: 14px;
+      color: var(--text-muted); transition: all 0.3s ease;
+    }
+    .module-card:hover .module-arrow { background: var(--electric); border-color: var(--electric); color: #fff; transform: translateX(3px); }
+    .info-strip {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--glass-border);
+      background: rgba(11,26,59,0.6); backdrop-filter: blur(10px);
+      padding: 24px 60px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    }
+    .info-brand { display: flex; align-items: center; gap: 12px; }
+    .info-brand img { height: 32px; object-fit: contain; opacity: 0.8; }
+    .info-brand-text { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+    .info-brand-text strong { color: var(--electric); }
+    .info-links { display: flex; gap: 20px; }
+    .info-links a { font-size: 11px; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+    .info-links a:hover { color: var(--electric); }
+    @media (max-width: 1024px) {
+      .modules-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero { flex-direction: column; padding: 50px 40px 40px; text-align: center; }
+      .hero-desc { margin: 0 auto 32px; }
+      .hero-cta { justify-content: center; }
+      .hero-kpis { justify-content: center; }
+      .hero-right { width: 220px; height: 220px; }
+      .gear-ring { width: 200px; height: 200px; }
+      .gear-inner { width: 140px; height: 140px; }
+      .gear-core { width: 80px; height: 80px; font-size: 36px; }
+      .hero-title { font-size: 48px; }
+    }
+    @media (max-width: 768px) {
+      .modules-grid { grid-template-columns: 1fr; }
+      .hero { padding: 40px 24px 30px; }
+      .modules-section { padding: 0 24px 60px; }
+      .topbar { padding: 0 20px; }
+      .topbar-status, .topbar-time { display: none; }
+      .hero-title { font-size: 36px; }
+      .hero-kpis { flex-wrap: wrap; gap: 16px; }
+      .info-strip { flex-direction: column; text-align: center; padding: 20px 24px; }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-tag    { animation: fadeUp 0.5s ease forwards; }
+    .hero-title  { animation: fadeUp 0.6s 0.1s ease forwards; opacity: 0; }
+    .hero-subtitle{ animation: fadeUp 0.6s 0.2s ease forwards; opacity: 0; }
+    .hero-desc   { animation: fadeUp 0.6s 0.3s ease forwards; opacity: 0; }
+    .hero-cta    { animation: fadeUp 0.6s 0.4s ease forwards; opacity: 0; }
+    .hero-kpis   { animation: fadeUp 0.6s 0.5s ease forwards; opacity: 0; }
+    .hero-right  { animation: fadeUp 0.8s 0.2s ease forwards; opacity: 0; }
+    .module-card { animation: fadeUp 0.5s ease forwards; opacity: 0; }
+    .module-card:nth-child(1) { animation-delay: 0.55s; }
+    .module-card:nth-child(2) { animation-delay: 0.65s; }
+    .module-card:nth-child(3) { animation-delay: 0.75s; }
+    .module-card:nth-child(4) { animation-delay: 0.85s; }
+    .module-card:nth-child(5) { animation-delay: 0.95s; }
+    .module-card:nth-child(6) { animation-delay: 1.05s; }
+    .scan-line {
+      position: fixed; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent);
+      z-index: 0; animation: scanDown 6s linear infinite; pointer-events: none;
+    }
+    @keyframes scanDown { from { top: -2px; } to { top: 100vh; } }
+  </style>
+</head>
+<body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="scan-line"></div>
+
+  <header class="topbar" id="topbar">
+    <div class="topbar-logo">
+      <img src="./logo.png" alt="Indopelita Logo" />
+      <div class="topbar-wordmark">
+        <div class="topbar-brand">INDOPELITA</div>
+        <div class="topbar-sub">A member of PELITA AIR</div>
+      </div>
+    </div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-product">
+      <div class="topbar-product-name">Smart Production</div>
+      <div class="topbar-product-sub">Industrial Services Platform</div>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-status">
+      <span class="status-dot"></span>
+      Sistem Aktif
+    </div>
+    <div class="topbar-time" id="live-clock">00:00:00</div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">Platform Produksi Industri</div>
+      <h1 class="hero-title">
+        SMART<br/>
+        <span class="accent">PRODUCTION</span>
+      </h1>
+      <div class="hero-subtitle">Industrial Services</div>
+      <p class="hero-desc">
+        Platform terintegrasi untuk monitoring karyawan, manajemen proyek,
+        S-Curve SLA, summary bulanan, dan sistem alarm — dirancang khusus
+        untuk operasional Workshop PT Indopelita Aircraft Services.
+      </p>
+      <div class="hero-cta">
+        <a href="industrial.html" class="btn-primary" id="btn-enter-industrial">&#9889; Masuk ke Industrial Services</a>
+        <a href="dashboard.html" class="btn-secondary" id="btn-enter-dashboard">&#128202; Dashboard WS Bandung</a>
+      </div>
+      <div class="hero-kpis">
+        <div class="kpi-item">
+          <span class="kpi-value">5+1</span>
+          <span class="kpi-label">Alur Industri</span>
+        </div>
+        <div class="kpi-sep"></div>
+        <div class="kpi-item">
+          <span class="kpi-value">NUP</span>
+          <span class="kpi-label">&amp; Invoice</span>
+        </div>
+        <div class="kpi-sep"></div>
+        <div class="kpi-item">
+          <span class="kpi-value">BAST</span>
+          <span class="kpi-label">&amp; ATPA</span>
+        </div>
+        <div class="kpi-sep"></div>
+        <div class="kpi-item">
+          <span class="kpi-value">WS</span>
+          <span class="kpi-label">Bandung</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right" aria-hidden="true">
+      <div class="gear-ring">
+        <div class="gear-dot" style="top:-5px;left:50%;transform:translateX(-50%);"></div>
+        <div class="gear-dot" style="bottom:-5px;left:50%;transform:translateX(-50%);"></div>
+        <div class="gear-dot" style="left:-5px;top:50%;transform:translateY(-50%);"></div>
+        <div class="gear-dot" style="right:-5px;top:50%;transform:translateY(-50%);"></div>
+      </div>
+      <div class="gear-inner">
+        <div class="gear-core">&#9881;&#65039;</div>
+      </div>
+    </div>
+  </section>
+
+  <main class="modules-section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Modul &amp; Alur Kerja Terintegrasi</div>
+        <div class="section-sub">Pilih modul alur industri atau monitoring operasional</div>
+      </div>
+    </div>
+    <div class="modules-grid" id="modules-grid">
+
+      <!-- Modul 1: NUP -->
+      <a href="industrial.html" id="card-nup" class="module-card">
+        <div class="module-icon-wrap">&#128221;</div>
+        <div class="module-info">
+          <div class="module-title">1. Input NUP Kontrak</div>
+          <div class="module-desc">Registrasi Nomor Urut Pekerjaan baru, data customer, nilai kontrak, area pekerjaan, dan target timeline.</div>
+        </div>
+        <div class="module-footer">
+          <span class="module-tag">Alur Industri &middot; Tahap 1</span>
+          <div class="module-arrow">&#8594;</div>
+        </div>
+      </a>
+
+      <!-- Modul 2: Tracking Tagihan / Invoice & BAST -->
+      <a href="industrial.html" id="card-tagihan" class="module-card accent-green">
+        <div class="module-icon-wrap">&#128181;</div>
+        <div class="module-info">
+          <div class="module-title">2. Tracking Tagihan &amp; BAST</div>
+          <div class="module-desc">Siklus penagihan terstruktur: Draft &rarr; Dikirim &rarr; BAL (Berita Acara Lapangan) &rarr; BAST &rarr; Pelunasan.</div>
+        </div>
+        <div class="module-footer">
+          <span class="module-tag">Finance &middot; Tahap 2</span>
+          <div class="module-arrow">&#8594;</div>
+        </div>
+      </a>
+
+      <!-- Modul 3: Workshop & Late Schedule -->
+      <a href="industrial.html" id="card-workshop" class="module-card accent-red">
+        <div class="module-icon-wrap">&#9881;&#65039;</div>
+        <div class="module-info">
+          <div class="module-title">3. Workshop &amp; Late Schedule</div>
+          <div class="module-desc">Monitoring progress per NUP, kesiapan manpower, status DP, dan formulir modifikasi jadwal jika terlambat.</div>
+        </div>
+        <div class="module-footer">
+          <span class="module-tag">Produksi &middot; Tahap 3</span>
+          <div class="module-arrow">&#8594;</div>
+        </div>
+      </a>
+
+      <!-- Modul 4: ATPA -->
+      <a href="industrial.html" id="card-atpa" class="module-card accent-purple">
+        <div class="module-icon-wrap">&#128295;</div>
+        <div class="module-info">
+          <div class="module-title">4. ATPA &amp; Peralatan</div>
+          <div class="module-desc">Pencatatan nomor ATPA, spesifikasi alat/material, nilai, status open/closed, dan verifikasi PIC lapangan.</div>
+        </div>
+        <div class="module-footer">
+          <span class="module-tag">Logistik &middot; Tahap 4</span>
+          <div class="module-arrow">&#8594;</div>
+        </div>
+      </a>
+
+      <!-- Modul 5: Pengeluaran PO & Margin -->
+      <a href="industrial.html" id="card-pengeluaran" class="module-card accent-amber">
+        <div class="module-icon-wrap">&#128179;</div>
+        <div class="module-info">
+          <div class="module-title">5. Pengeluaran PO &amp; Margin</div>
+          <div class="module-desc">Pelacakan biaya PO vendor dan pengeluaran unik proyek. Kalkulasi profit margin otomatis (Nilai Kontrak - Biaya).</div>
+        </div>
+        <div class="module-footer">
+          <span class="module-tag">Biaya &middot; Tahap 5</span>
+          <div class="module-arrow">&#8594;</div>
+        </div>
+      </a>
+
+      <!-- Modul 6: Dashboard WS Bandung -->
+      <a href="dashboard.html" id="card-wsbandung" class="module-card">
+        <div class="module-icon-wrap">&#128119;</div>
+        <div class="module-info">
+          <div class="module-title">Workshop Operations &amp; S-Curve</div>
+          <div class="module-desc">Monitoring SDM Karyawan, S-Curve SLA Overhaul, daftar proyek aktif, summary bulanan, issue, dan sistem alarm.</div>
+        </div>
+        <div class="module-footer">
+          <span class="module-tag">WS Bandung &middot; Operasional</span>
+          <div class="module-arrow">&#8594;</div>
+        </div>
+      </a>
+
+    </div>
+  </main>
+
+  <footer class="info-strip">
+    <div class="info-brand">
+      <img src="./logo.png" alt="Indopelita" />
+      <div class="info-brand-text">
+        <div><strong>Smart Production Industrial Services</strong></div>
+        <div>PT Indopelita Aircraft Services &middot; Workshop Bandung</div>
+      </div>
+    </div>
+    <div class="info-links">
+      <a href="industrial.html" id="footer-industrial-link" style="color:var(--electric); font-weight:700;">&#9889; Alur Industri (NUP)</a>
+      <a href="dashboard.html" id="footer-dashboard-link">Dashboard WS Bandung</a>
+      <a href="dashboard.html" id="footer-scurve-link" onclick="goToTab('scurve')">S-Curve</a>
+      <a href="dashboard.html" id="footer-projects-link" onclick="goToTab('projects')">Proyek</a>
+      <a href="dashboard.html" id="footer-summary-link" onclick="goToTab('summary')">Summary</a>
+    </div>
+  </footer>
+
+  <script>
+    function updateClock() {
+      var now = new Date();
+      var h = String(now.getHours()).padStart(2,'0');
+      var m = String(now.getMinutes()).padStart(2,'0');
+      var s = String(now.getSeconds()).padStart(2,'0');
+      var el = document.getElementById('live-clock');
+      if (el) el.textContent = h + ':' + m + ':' + s;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    function goToTab(tabName) {
+      localStorage.setItem('sp_open_tab', tabName);
+    }
+  </script>
+</body>
+</html>
