@@ -219,9 +219,9 @@ Pada `dashboard.html`, diterapkan proteksi hak akses berbasis peran (*Role-Based
 
 | Role | Password Default | Izin Akses Tab / Menu | Sifat Akses |
 |---|---|---|---|
-| **PPC** | `PPC2026` | Karyawan, S-Curve SLA, Daftar Proyek, Summary Bulanan, Issue, Alarm | **Full Access** (Baca, Tulis, Edit, Hapus) |
-| **HC** | `HC2026` | Karyawan, Summary Bulanan | **Read & Write** Data Karyawan |
-| **PRODUKSI** | `PRODUKSI2026`| S-Curve SLA, Daftar Proyek, Issue | **View-Only Mode** (Aksi penambahan/edit data dicegah dengan notifikasi visual) |
+| **PPC** | `` | Karyawan, S-Curve SLA, Daftar Proyek, Summary Bulanan, Issue, Alarm | **Full Access** (Baca, Tulis, Edit, Hapus) |
+| **HC** | `` | Karyawan, Summary Bulanan | **Read & Write** Data Karyawan |
+| **PRODUKSI** | ``| S-Curve SLA, Daftar Proyek, Issue | **View-Only Mode** (Aksi penambahan/edit data dicegah dengan notifikasi visual) |
 
 ---
 
